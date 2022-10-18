@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+
+<head>
+    {% block head %}
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{% block title %}BDSE27-4{% endblock title %}</title>
+
+    {% block scripts %}
+    {% include "parts/_scripts.html" %}
+    {% endblock scripts %}
+
+    {% block styles %}
+    {% include "parts/_styles.html" %}
+    {% endblock styles %}
+    
+    {% endblock head %}
+
+</head>
+
+<body class="navbar-fixed sidebar-fixed" id="body">
+    <script>
+        NProgress.configure({ showSpinner: false });
+        NProgress.start();
+    </script>
+
+
+    {% block body %}
+    <div class="wrapper">
+        {% block navbar_list %}
+        {% include "parts/_navbar.html" %}
+        {% endblock navbar_list %}
+
+        <div class="page-wrapper">
+
+            {% include "parts/_navbar_header.html" %}
+
+            {% block page_content %}
+
+            {% endblock page_content %}
+
+            {% include "parts/_navbar_footer.html" %}
+
+
+        </div>
+    </div>
+
+    {% endblock body %}
+    
+</body>
+
+</html>
+
+
+

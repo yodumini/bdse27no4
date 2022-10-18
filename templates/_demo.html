@@ -1,0 +1,13 @@
+{% extends "parts/base.html" %}
+
+{% block title %} 這是模板template {% endblock title %}
+
+{% block navbar_list %}
+{{ super() }}
+{% endblock navbar_list %}
+
+
+{% block page_content %}
+{{ super() }}
+<h3>something something and something.</h3>
+{% endblock page_content %}

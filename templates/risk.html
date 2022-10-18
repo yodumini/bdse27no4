@@ -1,0 +1,14 @@
+{% extends "parts/base.html" %}
+
+{% block title %} 請修改title {% endblock title %}
+
+{% block navbar_list %}
+{% include "parts/_navbar_tab4.html" %}
+
+{% endblock navbar_list %}
+
+
+{% block page_content %}
+{{ super() }}
+<h3>東西放page_content裡</h3>
+{% endblock page_content %}
