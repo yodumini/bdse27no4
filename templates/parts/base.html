@@ -43,14 +43,16 @@
 
             {% endblock page_content %}
 
-            {% include "parts/_navbar_footer.html" %}
 
 
         </div>
+
     </div>
 
     {% endblock body %}
-    
+    {% block script_foot%}
+    {% endblock script_foot %}
+
 </body>
 
 </html>
