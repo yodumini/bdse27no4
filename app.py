@@ -73,7 +73,7 @@ def process():
 
 @app.route('/stockplot')
 def stockplot():
-    df = pd.read_csv("BNB-UST.csv")
+    df = pd.read_csv("./data/BTCUSDT.csv")
     df = df[['open_time', 'open', 'high', 'low', 'close', 'volume']]
     r = df.values.tolist()
     return {"res":r}
