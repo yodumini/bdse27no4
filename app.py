@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 from predict import utils
 from predict.model import perform_training
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -69,5 +70,12 @@ def process():
                            prediction_date=prediction_date, dates=dates, all_data=all_data, len=len(all_data),
                            stockname=stockname)
 
+@app.route('/stockplot')
+def stockplot():
+    df = pd.read_csv("BNB-UST.csv")
+    df = df[['open_time', 'open', 'high', 'low', 'close', 'volume']]
+    r = df.values.tolist()
+    return {"res":r}
+
 if __name__=="__main__":
-	app.run(debug=True, port=5000)
+	app.run(debug=True, port=5001)

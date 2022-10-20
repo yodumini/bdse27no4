@@ -8,6 +8,28 @@
 
 
 {% block page_content %}
-{{ super() }}
-<h3>東西放page_content裡</h3>
+<div>
+    <table id="dataTable" class="table table-striped" style="width:100%;"></table>
+</div>
+<br>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    window.onload=function loadServerData(){
+    //data -> items(array)
+    //title, link, pubDate(空格切割,取前面)
+    let rss2json = "https://api.rss2json.com/v1/api.json?rss_url=";
+    $.getJSON(rss2json+"https://tw.stock.yahoo.com/rss?category=intl-markets")
+    .done(function(data){
+        // debugger;
+        for(let x=0;x<data.items.length;x++){
+            $("#dataTable").append(
+                `<tr><td><a target='_blank' href='${data.items[x].link}'>${data.items[x].title}</a></td><td>${data.items[x].pubDate.split(" ")[0]}</td></tr>`
+            );
+        }
+    })
+    .fail(function(){console.log("Error");})
+    .always(function(){console.log("Always");})
+}
+</script>
 {% endblock page_content %}
