@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 from predict import utils
 from predict.model import perform_training
 import pandas as pd
+import requests
 
 app = Flask(__name__)
 
@@ -76,6 +77,14 @@ def stockplot():
     df = df[['open_time', 'open', 'high', 'low', 'close', 'volume']]
     r = df.values.tolist()
     return {"res":r}
+
+@app.route('/newslist')
+def newslist():
+    url = "https://www.toptal.com/developers/feed2json/convert?url=https://tw.stock.yahoo.com/rss?category=intl-markets"
+    r = requests.get(url)
+    r = r.json()
+    return r
+
 
 if __name__=="__main__":
 	app.run(debug=True, port=5001)
