@@ -76,7 +76,7 @@ def stockplot():
     df = pd.read_csv("./data/BTCUSDT.csv")
     df = df[['open_time', 'open', 'high', 'low', 'close', 'volume']]
     r = df.values.tolist()
-    return {"res":r}
+    return {"res": r}
 
 @app.route('/newslist')
 def newslist():
