@@ -6,10 +6,10 @@ from sklearn import tree
 from sklearn import linear_model
 from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import mean_squared_error
-from keras.models import Sequential
+# from keras.models import Sequential
 from sklearn.model_selection import train_test_split
-from keras.layers import Dense
-from keras.layers import LSTM
+# from keras.layers import Dense
+# from keras.layers import LSTM
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 import numpy
@@ -194,57 +194,57 @@ def elastic_net(dates, prices, test_date, df):
 
     return (decision_boundary, prediction, test_score)
 
-def LSTM_model(dates, prices, test_date, df):
-    df.drop(df.columns.difference(['date', 'open']), 1, inplace=True)
-    df = df['open']
-    dataset = df.values
-    dataset = dataset.reshape(-1, 1)
-    dataset = dataset.astype('float32')
-
-    # normalize the dataset
-    scaler = MinMaxScaler(feature_range=(0, 1))
-    dataset = scaler.fit_transform(dataset)
-
-    # split into train and test sets
-    train_size = len(dataset) - 2
-    train, test = dataset[0:train_size, :], dataset[train_size:len(dataset), :]
-
-    # reshape into X=t and Y=t+1
-    look_back = 1
-    trainX, trainY = create_dataset(train, look_back)
-    testX, testY = create_dataset(test, look_back)
-    X_train, X_test, y_train, y_test = train_test_split(trainX, trainY, test_size=0.33, random_state=42)
-    # reshape input to be [samples, time steps, features]
-    X_train = numpy.reshape(X_train, (X_train.shape[0], 1, X_train.shape[1]))
-    X_test = numpy.reshape(X_test, (X_test.shape[0], 1, X_test.shape[1]))
-    testX = numpy.reshape(testX, (testX.shape[0], 1, testX.shape[1]))
-
-    # create and fit the LSTM network
-    model = Sequential()
-    model.add(LSTM(4, input_shape=(1, look_back)))
-    model.add(Dense(1))
-    model.compile(loss='mean_squared_error', optimizer='adam')
-    model.fit(X_train, y_train, epochs=100, batch_size=1, verbose=2)
-
-    # make predictions
-    trainPredict = model.predict(X_train)
-    mainTestPredict = model.predict(X_test)
-    testPredict = model.predict(testX)
-
-    # invert predictions
-    trainPredict = scaler.inverse_transform(trainPredict)
-    y_train = scaler.inverse_transform([y_train])
-
-    testPredict = scaler.inverse_transform(testPredict)
-    testY = scaler.inverse_transform([testY])
-
-    mainTestPredict = scaler.inverse_transform(mainTestPredict)
-    mainTestPredict = [item for sublist in mainTestPredict for item in sublist]
-    y_test = scaler.inverse_transform([y_test])
-    test_score = mean_squared_error(y_test[0], mainTestPredict)
-    # calculate root mean squared error
-    trainPredict = [item for sublist in trainPredict for item in sublist]
-
-    # print(trainPredict, testPredict[0])
-
-    return (trainPredict, (testPredict[0])[0], test_score)
+# def LSTM_model(dates, prices, test_date, df):
+#     df.drop(df.columns.difference(['date', 'open']), 1, inplace=True)
+#     df = df['open']
+#     dataset = df.values
+#     dataset = dataset.reshape(-1, 1)
+#     dataset = dataset.astype('float32')
+#
+#     # normalize the dataset
+#     scaler = MinMaxScaler(feature_range=(0, 1))
+#     dataset = scaler.fit_transform(dataset)
+#
+#     # split into train and test sets
+#     train_size = len(dataset) - 2
+#     train, test = dataset[0:train_size, :], dataset[train_size:len(dataset), :]
+#
+#     # reshape into X=t and Y=t+1
+#     look_back = 1
+#     trainX, trainY = create_dataset(train, look_back)
+#     testX, testY = create_dataset(test, look_back)
+#     X_train, X_test, y_train, y_test = train_test_split(trainX, trainY, test_size=0.33, random_state=42)
+#     # reshape input to be [samples, time steps, features]
+#     X_train = numpy.reshape(X_train, (X_train.shape[0], 1, X_train.shape[1]))
+#     X_test = numpy.reshape(X_test, (X_test.shape[0], 1, X_test.shape[1]))
+#     testX = numpy.reshape(testX, (testX.shape[0], 1, testX.shape[1]))
+#
+#     # create and fit the LSTM network
+#     model = Sequential()
+#     model.add(LSTM(4, input_shape=(1, look_back)))
+#     model.add(Dense(1))
+#     model.compile(loss='mean_squared_error', optimizer='adam')
+#     model.fit(X_train, y_train, epochs=100, batch_size=1, verbose=2)
+#
+#     # make predictions
+#     trainPredict = model.predict(X_train)
+#     mainTestPredict = model.predict(X_test)
+#     testPredict = model.predict(testX)
+#
+#     # invert predictions
+#     trainPredict = scaler.inverse_transform(trainPredict)
+#     y_train = scaler.inverse_transform([y_train])
+#
+#     testPredict = scaler.inverse_transform(testPredict)
+#     testY = scaler.inverse_transform([testY])
+#
+#     mainTestPredict = scaler.inverse_transform(mainTestPredict)
+#     mainTestPredict = [item for sublist in mainTestPredict for item in sublist]
+#     y_test = scaler.inverse_transform([y_test])
+#     test_score = mean_squared_error(y_test[0], mainTestPredict)
+#     # calculate root mean squared error
+#     trainPredict = [item for sublist in trainPredict for item in sublist]
+#
+#     # print(trainPredict, testPredict[0])
+#
+#     return (trainPredict, (testPredict[0])[0], test_score)
