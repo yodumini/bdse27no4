@@ -10,33 +10,26 @@
 {% block page_content %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<form class="form-inline" style="" method="POST" action="/newslist">
+    <div class="row input-group-newsletter" >
+        <div class="col">
+            <input class="form-control" id="testInput" name="url" style="width: 100%" type="search" placeholder="請輸入關鍵字">
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </div>
+    </div>
+</form>
 <div>
-    <table id="dataTable" class="table" style="width:100%;"></table>
+    <table id="dataTable" class="table table-striped">
+        {% for i in res %}
+        <tr>
+            <td><a href={{ i['link'] }}>{{ i['title'] }}</a></td>
+            <td>{{ i['published'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 </div>
-<br>
-
-<script>
-    $(function () {
-        $("button").on("click", loadServerData);
-    });
-    window.onload=function loadServerData() {
-        //data -> items(array)
-        //title, link, pubDate(空格切割,取前面)
-        $.getJSON('/newslist', function (data) {
-            // debugger;
-            for (let x = 0; x < data.items.length; x++) {
-                $("#dataTable").append(
-                    `<tr>
-                        <td><a href='${data.items[x].url}'>${data.items[x].title}</a></td>
-                        <td>${data.items[x].date_published.split("T")[0]}</td>
-                    </tr>`
-                );
-            }
-        })
-    };
-</script>
-
-
-
 
 {% endblock page_content %}
+
