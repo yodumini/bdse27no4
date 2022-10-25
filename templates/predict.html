@@ -1,6 +1,6 @@
 {% extends "parts/base.html" %}
 
-{% block title %} 請修改title {% endblock title %}
+{% block title %} 預測模型 {% endblock title %}
 
 
 {% block head %}
@@ -42,6 +42,7 @@
 
 
 {% block page_content %}
+
 <div style="width:100%">
     <form class="form-inline" style="text-align:center;" method="POST" action="/process">
         <!-- Heading -->
@@ -65,14 +66,17 @@
             <div class="form-group" style="width:25%;">
 
                 <select class="selectpicker" multiple data-live-search="true" name="mlalgos">
-                    <option value="SVR_linear">SVR (Linear)</option>
+                    <!-- <option value="SVR_linear">SVR (Linear)</option>
                     <option value="SVR_rbf">SVR (RBF)</option>
                     <option value="linear_regression" selected>Linear Regression</option>
                     <option value="random_forests">Random Forests</option>
                     <option value="KNN">K Nearest Neighbors (KNN)</option>
                     <option value="DT">Decision Trees</option>
-                    <option value="elastic_net">Elastic Net</option>
-                    <option value="LSTM_model">LSTM model</option>
+                    <option value="elastic_net">Elastic Net</option> -->
+                    <option value="LSTM_model" selected>LSTM model</option>
+                    <option value="GRU_model" selected>GRU model</option>
+                    <option value="LSTM_cci30_model">LSTM_cci30_model</option>
+                    <option value="GRU_cci30_model">GRU_cci30_model</option>
                 </select>
             </div>
 
@@ -128,6 +132,7 @@
                 <!-- Page Heading -->
                 <h1 class="h3 mb-2 text-gray-800">模型評估</h1>
                 <p class="mb-4">我們使用均方誤差 MSE（Mean-Square Error）來成為模型的評估標準，通常來說值越低越好。</p>
+                <p class="mb-4">為求客觀，另提供R square 為輔助評估指標，通常來說此值越接近1越好。</p>
 
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
@@ -141,13 +146,17 @@
                                     <tr>
                                         <th>模型函數</th>
                                         <th>MSE</th>
+                                        <th>R Square</th>
+                                        <th>訓練時間(秒)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for i in range(0, len2 - 1) %}
                                     <tr>
                                         <td>{{ all_test_evaluations[i][0] }}</td>
-                                        <td>{{ all_test_evaluations[i][1] }}</td>
+                                        <td>{{ all_test_evaluations[i][1][0] }}</td>
+                                        <td>{{ all_test_evaluations[i][1][1] }}</td>
+                                        <td>{{ all_test_evaluations[i][1][2] }}</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -163,7 +172,7 @@
 
                 <!-- Page Heading -->
                 <h1 class="h3 mb-2 text-gray-800">預測結果</h1>
-                <p class="mb-4">底下是模型所預測的未來幣價 <br>Date: {{ prediction_date }}.</p>
+                <p class="mb-4">底下是模型所預測的未來十日幣價 <br>Date: {{ prediction_date }}.</p>
 
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
@@ -280,10 +289,11 @@
                       showLine: {{ all_data[i][1] | safe}},
                       data: [{% for item in all_data[i][0] %}
                                 {{item}},
-                              {% endfor %}],
+                              {% endfor %}
+                            ],
                       },
 
-                      {%endfor%}
+                      {% endfor %}
                       ],
           },
           options: {
@@ -344,7 +354,7 @@
               callbacks: {
                 label: function(tooltipItem, chart) {
                   var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-                  return datasetLabel + ':' + number_format(tooltipItem.yLabel);
+                  return datasetLabel + ':' + number_format(tooltipItem.yLabel,decimals=3);
                 }
               }
             }

@@ -57,11 +57,14 @@ def demo():
 all_files = utils.read_all_stock_files('predict/individual_stocks_5yr')
 
 
+
 @app.route('/predict')
 def landing_function():
+    title = "預測模型"
     stock_files = list(all_files.keys())
+    stock_files.sort()
 
-    return render_template('predict.html', show_results="false",
+    return render_template('predict.html', show_results="false", title=title,
                            stocklen=len(stock_files), stock_files=stock_files, len2=len([]),
                            all_prediction_data=[],
                            prediction_date="", dates=[], all_data=[], len=len([]))
@@ -69,6 +72,7 @@ def landing_function():
 
 @app.route('/process', methods=['POST'])
 def process():
+    title="模型預測結果"
     stock_file_name = request.form['stockfile']
     ml_algoritms = request.form.getlist('mlalgos')
     df = all_files[str(stock_file_name)]
@@ -77,7 +81,7 @@ def process():
         perform_training(str(stock_file_name), df, ml_algoritms)
     stock_files = list(all_files.keys())
 
-    return render_template('predict.html', all_test_evaluations=all_test_evaluations, show_results="true",
+    return render_template('predict.html', all_test_evaluations=all_test_evaluations, show_results="true",title=title,
                            stocklen=len(stock_files), stock_files=stock_files,
                            len2=len(all_prediction_data),
                            all_prediction_data=all_prediction_data,

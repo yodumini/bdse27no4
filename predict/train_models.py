@@ -21,21 +21,25 @@ import numpy
 # Load the data
 # from google.colab import files # Use to load data on Google Colab
 # uploaded = files.upload() # Use to load data on Google Colab
+# def create_plot(dates, original_prices, ml_models_outputs):
+#     plt.scatter(dates, original_prices, color='black', label='Data')
+#     for model in ml_models_outputs.keys():
+#         plt.plot(dates, (ml_models_outputs[model])[0], color=numpy.random.rand(3, ), label=model)
 
-def create_plot(dates, original_prices, ml_models_outputs):
-    plt.scatter(dates, original_prices, color='black', label='Data')
-    for model in ml_models_outputs.keys():
-        plt.plot(dates, (ml_models_outputs[model])[0], color=numpy.random.rand(3, ), label=model)
-
-    plt.xlabel('Days')
-    plt.ylabel('Price')
-    plt.title('Regression')
-    plt.legend()
-    plt.savefig("Plot.png")
-    plt.show()
+#     plt.xlabel('Days')
+#     plt.ylabel('Price')
+#     plt.title('Regression')
+#     plt.legend()
+#     plt.savefig("Plot.png")
+#     plt.show()
 
 
 def train_predict_plot(file_name, df, ml_model):
+    # time series DL model parameters
+    look_back = 10
+    epochs=100
+    batch_size=8
+    d=0.2
 
     # print (df.head())
 
@@ -45,13 +49,17 @@ def train_predict_plot(file_name, df, ml_model):
     # utils.LSTM_model(dates, prices, test_date, df)
     for model in ml_model:
         method_to_call = getattr(utils, model)
-        ml_models_outputs[model] = method_to_call(dates, prices, test_date, df)
+        ml_models_outputs[model] = method_to_call(dates, prices, test_date, df, look_back = look_back, epochs = epochs, batch_size = batch_size, d = d)
 
     dates = list(df['date'])
     predict_date = dates[-1]
-    dates = dates[:-3]
+    #dates = dates[:-3]
+    #dates = dates[look_back:]
+    #prices = prices[look_back:]
     # create_plot(dates, prices, ml_models_outputs)
-    return dates, prices, ml_models_outputs, predict_date, test_price
+
+    #多回傳一個 look_back方便後續畫圖
+    return dates, prices, ml_models_outputs, predict_date, test_price, look_back
 
 # train_predict_plot('GOOG_30_days.csv', ['LSTM_model', 'elastic_net', 'BR'])
 
