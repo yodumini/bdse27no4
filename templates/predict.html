@@ -14,26 +14,21 @@
     rel="stylesheet"> -->
 <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"> -->
 <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap-select.css') }}" />
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+{#<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>#}
+{#<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>#}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 
 <!-- Custom styles for this template-->
 <!-- <link href="{{ url_for('static',filename='css/sb-admin-2.min.css') }}" rel="stylesheet"> -->
 <style>
 #myAreaChart {
-    height: 400px;
+    height: 350px;
     min-width: 310px;
 }
 
 </style>
 
 {% endblock head %}
-
-{% block scripts %}
-
-{% endblock scripts %}
-
 
 
 {% block navbar_list %}
@@ -95,8 +90,6 @@
 {% if show_results == "false" %}
 <p style="text-align:center;margin-top:15%">
     <i class="fas fa-cogs fa-5x" style="color:#1c5d3c;"></i>
-    <br />
-    <br />
     Start Analysis
 </p>
 <div class="container-fluid" style="display:none;">

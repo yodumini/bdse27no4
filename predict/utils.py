@@ -436,7 +436,7 @@ def LSTM_cci30_model(dates, prices, test_date, df,look_back = 10,epochs=50, batc
     X_test = numpy.reshape(X_test, (X_test.shape[0], look_back, 1))
     testX = numpy.reshape(testX, (testX.shape[0], look_back,1))
     # create and fit the LSTM network
-    model = tf.keras.models.load_model('predict/bdse27_lstm_model_cci30.h5', "r")
+    model = tf.keras.models.load_model('predict/bdse27_lstm_model_cci30.h5')
 
     # train model
     start_time=datetime.datetime.now()

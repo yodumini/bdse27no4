@@ -80,6 +80,7 @@ def process():
     all_prediction_data, all_prediction_data, prediction_date, dates, all_data, all_data, all_test_evaluations = \
         perform_training(str(stock_file_name), df, ml_algoritms)
     stock_files = list(all_files.keys())
+    stock_files.sort()
 
     return render_template('predict.html', all_test_evaluations=all_test_evaluations, show_results="true",title=title,
                            stocklen=len(stock_files), stock_files=stock_files,
@@ -100,5 +101,5 @@ def stockplot():
 if __name__=="__main__":
     app.run(debug=True, port=5001)
 
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    # port = int(os.environ.get('PORT', 5000))
+    # app.run(host='0.0.0.0', port=port, debug=True)
