@@ -39,10 +39,20 @@ def newslist():
 #   title = "預測模型"
 #   return render_template('predict.html', title=title)
 
+@app.route('/test_post/nn')#路由
+def test_post():
+    csv_read_file = pd.read_csv("data/聚類结果.csv", encoding="utf-8")
+    csv_read_data = csv_read_file.values.tolist()
+    return {"imgdata": csv_read_data}
+
+
 @app.route('/risk')
 def risk():
     title = "風險分類"
-    return render_template('risk.html', title=title)
+    csv_read_file = pd.read_csv("data/聚類结果.csv", encoding="utf-8")
+    csv_read_data = csv_read_file.values.tolist()
+    extent = len(csv_read_data)
+    return render_template('risk.html', df=csv_read_data, extent=extent, title=title)
 
 @app.route('/team')
 def team():

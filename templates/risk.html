@@ -1,6 +1,58 @@
 {% extends "parts/base.html" %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
+<style>
+    .highcharts-figure,
+    .highcharts-data-table table {
+        min-width: 310px;
+        max-width: 800px;
+        margin: 0 auto;
+    }
 
-{% block title %} 請修改title {% endblock title %}
+    #container {
+        height: 400px;
+    }
+
+    .highcharts-data-table table {
+        font-family: Verdana, sans-serif;
+        border-collapse: collapse;
+        border: 1px solid #ebebeb;
+        margin: 10px auto;
+        text-align: center;
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .highcharts-data-table caption {
+        padding: 1em 0;
+        font-size: 1.2em;
+        color: #555;
+    }
+
+    .highcharts-data-table th {
+        font-weight: 600;
+        padding: 0.5em;
+    }
+
+    .highcharts-data-table td,
+    .highcharts-data-table th,
+    .highcharts-data-table caption {
+        padding: 0.5em;
+    }
+
+    .highcharts-data-table thead tr,
+    .highcharts-data-table tr:nth-child(even) {
+        background: #f8f8f8;
+    }
+
+    .highcharts-data-table tr:hover {
+        background: #f1f7ff;
+    }
+</style>
+
+
+{% block title %}風險分類{% endblock title %}
 
 {% block navbar_list %}
 {% include "parts/_navbar_tab4.html" %}
@@ -10,5 +62,203 @@
 
 {% block page_content %}
 {{ super() }}
-<h3>東西放page_content裡</h3>
+<!-- <div id="3dimg" Style="height: 400px;min-width: 310px;max-width: 800px;margin: 0 auto;"></div> -->
+<figure class="highcharts-figure">
+    <div id="container"></div>
+    <p class="highcharts-description"></p>
+</figure>
+<div class="container">
+    <!-- <h3>東西放page_content裡</h3> -->
+    <table id="tabledata" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Std</th>
+                <th>High</th>
+                <th>Low</th>
+                <th>分群結果</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in range(extent) %}
+            <tr>
+                <td>{{ df[i][0] }}</td>
+                <td>{{ df[i][1] }}</td>
+                <td>{{ df[i][2] }}</td>
+                <td>{{ df[i][3] }}</td>
+                <td>
+                    {% if df[i][4]==1 %}
+                    <i style="width:20px;height:20px;border-radius:50%;background-color:red;display: block"></i>
+                    {% else %}
+                    <i style="width:20px;height:20px;border-radius:50%;background-color:green;display: block"></i>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
+
+<script type="text/javascript" charset="utf8"
+    src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-3d.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script>
+
+    $(document).ready(function () {
+        $('#tabledata').DataTable();
+    });
+
+
+    Highcharts.getJSON('/test_post/nn', function (imgdata) {
+        var imgdata = imgdata["imgdata"]
+        // split the data set into ohlc and volume
+        var ohlc = [],
+            dataLength = imgdata.length,
+            i = 0;
+
+        for (i; i < dataLength; i += 1) {
+            ohlc.push({
+                marker: {symbol: 'circle'}, // std
+                name: imgdata[i][0],
+                color: imgdata[i][4] == 1 ? "#ff0000" : "#00ff00",
+                data: [[imgdata[i][1], imgdata[i][2], imgdata[i][3]]]
+            })
+            // ohlc.push({
+            //     x: imgdata[i][1], // std
+            //     y: imgdata[i][2], // open
+            //     z: imgdata[i][3], // high
+            //     name: imgdata[i][0],
+            //     color: imgdata[i][4] == 1 ? "#ff0000" : "#00ff00",
+            // })
+
+        }
+
+
+        Highcharts.setOptions({
+            colors: Highcharts.getOptions().colors.map(function (color) {
+                return {
+                    radialGradient: {
+                        cx: 0.4,
+                        cy: 0.3,
+                        r: 0.5
+                    },
+                    stops: [
+                        [0, color],
+                        [1, Highcharts.color(color).brighten(-0.2).get('rgb')]
+                    ]
+                };
+            })
+        });
+
+        // Set up the chart
+        var chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'container',
+                margin: 100,
+                type: 'scatter3d',
+                animation: false,
+                options3d: {
+                    enabled: true,
+                    alpha: 10,
+                    beta: 30,
+                    depth: 250,
+                    viewDistance: 5,
+                    fitToPlot: false,
+                    frame: {
+                        bottom: { size: 1, color: 'rgba(0,0,0,0.02)' },
+                        back: { size: 1, color: 'rgba(0,0,0,0.04)' },
+                        side: { size: 1, color: 'rgba(0,0,0,0.06)' }
+                    }
+                }
+            },
+            title: {
+                text: 'Draggable box'
+            },
+            subtitle: {
+                text: 'Click and drag the plot area to rotate in space'
+            },
+            plotOptions: {
+                scatter: {
+                    width: 1,
+                    height: 1,
+                    depth: 1
+                }
+            },
+            yAxis: {
+                min: 0,
+                max: 1,
+                title: null
+            },
+            xAxis: {
+                min: 0,
+                max: 1,
+                gridLineWidth: 1
+            },
+            zAxis: {
+                min: 0,
+                max: 1,
+                showFirstLabel: false
+            },
+            legend: {
+                enabled: false
+            },
+            series: ohlc
+        });
+
+
+        // Add mouse and touch events for rotation
+        (function (H) {
+            function dragStart(eStart) {
+                eStart = chart.pointer.normalize(eStart);
+
+                var posX = eStart.chartX,
+                    posY = eStart.chartY,
+                    alpha = chart.options.chart.options3d.alpha,
+                    beta = chart.options.chart.options3d.beta,
+                    sensitivity = 5,  // lower is more sensitive
+                    handlers = [];
+
+                function drag(e) {
+                    // Get e.chartX and e.chartY
+                    e = chart.pointer.normalize(e);
+
+                    chart.update({
+                        chart: {
+                            options3d: {
+                                alpha: alpha + (e.chartY - posY) / sensitivity,
+                                beta: beta + (posX - e.chartX) / sensitivity
+                            }
+                        }
+                    }, undefined, undefined, false);
+                }
+
+                function unbindAll() {
+                    handlers.forEach(function (unbind) {
+                        if (unbind) {
+                            unbind();
+                        }
+                    });
+                    handlers.length = 0;
+                }
+
+                handlers.push(H.addEvent(document, 'mousemove', drag));
+                handlers.push(H.addEvent(document, 'touchmove', drag));
+
+
+                handlers.push(H.addEvent(document, 'mouseup', unbindAll));
+                handlers.push(H.addEvent(document, 'touchend', unbindAll));
+            }
+            H.addEvent(chart.container, 'mousedown', dragStart);
+            H.addEvent(chart.container, 'touchstart', dragStart);
+        }(Highcharts));
+    })
+
+</script>
 {% endblock page_content %}
