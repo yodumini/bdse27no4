@@ -3,21 +3,89 @@ from predict import utils
 from predict.model import perform_training
 import pandas as pd
 import requests
-from urllib.parse import unquote,quote
+from urllib.parse import quote
 import feedparser
+import os
+import json
+import multiprocessing as mp
 
 
 app = Flask(__name__)
 
+# @app.route('/')
+# def found():
+#     title = "即時幣價"
+#     return render_template('index.html', title=title)
+#
+# @app.route('/index')
+# def index():
+#     title = "即時幣價"
+#     return render_template('index.html', title=title)
+
+columns = ['s', 'o', 'h', 'l', 'v', 'qv']
+
+
+def job(x):
+    query_url = f'https://www.binance.com/bapi/asset/v2/public/asset-service/product/get-product-by-symbol?symbol={x}'
+    response = requests.get(query_url)
+    data = json.loads(response.text)['data']
+    df = pd.DataFrame(data, columns=columns, index=[0])
+    return df
+
 @app.route('/')
+@app.route('/index')
 def found():
     title = "即時幣價"
-    return render_template('index.html', title=title)
-						   
-@app.route('/index')
-def index():
-    title = "即時幣價"
-    return render_template('index.html', title=title)
+    stock_list = [file[:-4] for file in os.listdir("predict/data")]
+    stock_list.sort()
+
+    # df_list = []
+    # for i in stock_list:
+    #     query_url = f'https://www.binance.com/bapi/asset/v2/public/asset-service/product/get-product-by-symbol?symbol={i}'
+    #     response = requests.get(query_url)
+    #     data = json.loads(response.text)
+    #     if data['data']:
+    #         df = pd.DataFrame(data['data'], columns=columns, index=[0])
+    #         df_list.append(df)
+
+    pool = mp.Pool(processes=3)
+    df_list = pool.map(job, stock_list)
+    df_list = pd.concat(df_list)
+    df_list = df_list.dropna()
+    df_list = df_list.sort_values('s')
+
+    df_list2 = []
+    for i in ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'DOGEUSDT']:
+        query_url = f'https://www.binance.com/bapi/asset/v2/public/asset-service/product/get-product-by-symbol?symbol={i}'
+        response = requests.get(query_url)
+        data = json.loads(response.text)['data']
+        if data:
+            df_list2.append({
+                'name': data['an'],
+                'price': data['o'],
+            })
+
+    return render_template('index.html', title=title, crypto_name=stock_list, output=df_list, df_list=df_list2)
+
+# @app.route('/index')
+# def index():
+#     title = "即時幣價"
+#     stock_list = []
+#     for file in dirs:
+#         stock_list.append((file)[:-4])
+#     stock_list.sort()
+#
+#     df_list = []
+#     for i in ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'DOGEUSDT']:
+#         query_url = f'https://www.binance.com/bapi/asset/v2/public/asset-service/product/get-product-by-symbol?symbol={i}'
+#         response = requests.get(query_url)
+#         data = json.loads(response.text)['data']
+#         if data:
+#             df_list.append({
+#                 'name': data['an'],
+#                 'price': data['o'],
+#             })
+#     return render_template('index.html', title=title, crypto_name=stock_list, df_list=df_list)
 
 @app.route('/news')
 def analytics():
@@ -39,7 +107,7 @@ def newslist():
 #   title = "預測模型"
 #   return render_template('predict.html', title=title)
 
-@app.route('/test_post/nn')#路由
+@app.route('/test_post/nn') #路由
 def test_post():
     csv_read_file = pd.read_csv("data/聚類结果.csv", encoding="utf-8")
     csv_read_data = csv_read_file.values.tolist()
@@ -99,14 +167,38 @@ def process():
                            prediction_date=prediction_date, dates=dates, all_data=all_data, len=len(all_data),
                            stockname=stockname)
 
-@app.route('/stockplot')
+# @app.route('/stockplot')
+# def stockplot():
+#     df = pd.read_csv("./data/BTCUSDT.csv")
+#     df = df[['open_time', 'open', 'high', 'low', 'close', 'volume']]
+#     r = df.values.tolist()
+#     return {"res": r}
+
+@app.route('/stockplot',methods=["GET","POST"])
 def stockplot():
-    df = pd.read_csv("./data/BTCUSDT.csv")
+    crypto = request.values
+    if not crypto:
+        crypto = "1INCHUSDT"
+    else:
+        crypto = request.values["crypto"]
+    df = pd.read_csv(f"data/{crypto}.csv")
     df = df[['open_time', 'open', 'high', 'low', 'close', 'volume']]
     r = df.values.tolist()
     return {"res": r}
 
-
+@app.route('/coinprice',methods=["GET"])
+def coinprice():
+    df_list = []
+    for i in ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'DOGEUSDT']:
+        query_url = f'https://www.binance.com/bapi/asset/v2/public/asset-service/product/get-product-by-symbol?symbol={i}'
+        response = requests.get(query_url)
+        data = json.loads(response.text)['data']
+        if data:
+            df_list.append({
+                'name': data['an'],
+                'price': data['o'],
+            })
+    return {"res": df_list}
 
 if __name__=="__main__":
     app.run(debug=True, port=5001)

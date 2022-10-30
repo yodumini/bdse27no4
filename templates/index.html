@@ -1,6 +1,6 @@
 {% extends "parts/base.html" %}
 
-{% block title %} 請修改title {% endblock title %}
+{% block title %} 即時幣價 {% endblock title %}
 
 {% block head %}
 {{ super() }}
@@ -25,8 +25,126 @@
 <script src="https://code.highcharts.com/stock/modules/hollowcandlestick.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
+
+<link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap-select.css') }}" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+
+
 {% endblock head %}
 
+{% block script_foot%}
+    <script>
+    let cryptoName = "1INCHUSDT";
+    function draw(){
+        Highcharts.getJSON(`/stockplot?crypto=${cryptoName}`, function (data) {
+            var data = data["res"]
+            // split the data set into ohlc and volume
+            var ohlc = [],
+                volume = [],
+                dataLength = data.length,
+                i = 0;
+
+            for (i; i < dataLength; i += 1) {
+                ohlc.push([
+                    data[i][0], // the date
+                    data[i][1], // open
+                    data[i][2], // high
+                    data[i][3], // low
+                    data[i][4] // close
+                ]);
+
+                volume.push([
+                    data[i][0], // the date
+                    data[i][5] // the volume
+                ]);
+            }
+
+            Highcharts.stockChart('container', {
+                yAxis: [{
+                    labels: {
+                        align: 'left'
+                    },
+                    height: '80%',
+                    resize: {
+                        enabled: true
+                    }
+                }, {
+                    labels: {
+                        align: 'left'
+                    },
+                    top: '80%',
+                    height: '20%',
+                    offset: 0
+                }],
+                tooltip: {
+                    shape: 'square',
+                    headerShape: 'callout',
+                    borderWidth: 0,
+                    shadow: false,
+                    positioner: function (width, height, point) {
+                        var chart = this.chart,
+                            position;
+
+                        if (point.isHeader) {
+                            position = {
+                                x: Math.max(
+                                    // Left side limit
+                                    chart.plotLeft,
+                                    Math.min(
+                                        point.plotX + chart.plotLeft - width / 2,
+                                        // Right side limit
+                                        chart.chartWidth - width - chart.marginRight
+                                    )
+                                ),
+                                y: point.plotY
+                            };
+                        } else {
+                            position = {
+                                x: point.series.chart.plotLeft,
+                                y: point.series.yAxis.top - chart.plotTop
+                            };
+                        }
+
+                        return position;
+                    }
+                },
+                series: [{
+                    type: 'ohlc',
+                    id: `${cryptoName}`,
+                    name: `${cryptoName} Price`,
+                    data: ohlc
+                }, {
+                    type: 'column',
+                    id: `${cryptoName}-volume`,
+                    name: `${cryptoName} Volume`,
+                    data: volume,
+                    yAxis: 1
+                }],
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 800
+                        },
+                        chartOptions: {
+                            rangeSelector: {
+                                inputEnabled: false
+                            }
+                        }
+                    }]
+                }
+            });
+        });
+    };
+    $(document).ready(draw);
+    $("#crypto").on("change",function(){
+        cryptoName = this.value;
+        draw();
+    });
+
+    </script>
+    <script src="static/dbtheme/plugins/apexcharts/apexcharts.js"></script>
+    <script src="static/dbtheme/js/chart.js"></script>
+{% endblock script_foot %}
 
 {% block navbar_list %}
 {% include "parts/_navbar_tab1.html" %}
@@ -35,114 +153,112 @@
 
 
 {% block page_content %}
-<div id="toaster"></div>
+{#    <div id="toaster"></div>#}
 
-<div style="width: 80%;margin: 20px auto;">
-    <div id="container" class="chart"></div>
+<div class="row" style="height: 120px">
+<div class="col-xl-3 col-sm-6">
+  <div class="card card-default card-mini">
+    <div class="card-header">
+      <h2>$ {{ df_list[0]['price'] }}</h2>
+      <div class="sub-title">
+        <span class="mr-1">{{ df_list[0]['name'] }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-xl-3 col-sm-6">
+  <div class="card card-default card-mini">
+    <div class="card-header">
+      <h2>$ {{ df_list[1]['price'] }}</h2>
+      <div class="sub-title">
+        <span class="mr-1">{{ df_list[1]['name'] }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-xl-3 col-sm-6">
+  <div class="card card-default card-mini">
+    <div class="card-header">
+      <h2>$ {{ df_list[2]['price'] }}</h2>
+      <div class="sub-title">
+        <span class="mr-1">{{ df_list[2]['name'] }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-xl-3 col-sm-6">
+  <div class="card card-default card-mini">
+    <div class="card-header">
+      <h2>$ {{ df_list[3]['price'] }}</h2>
+      <div class="sub-title">
+        <span class="mr-1">{{ df_list[3]['name'] }}</span>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
 
 
+<div class="row">
+    <div class="col-12">
+      <div class="card card-default">
+        <div class="card-header">
+            <h2 class="text-primary" >K線圖</h2>
+            <div style="width: 30%">
+                <select class="selectpicker" data-live-search="true" id="crypto" name ="crypto" >
+                    {% for name in crypto_name  %}
+                        <option> {{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="card-body">
+            <div>
+                <div id="container" class="chart"></div>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
 
-<script>
-    Highcharts.getJSON('/stockplot', function (data) {
-        var data = data["res"]
-        // split the data set into ohlc and volume
-        var ohlc = [],
-            volume = [],
-            dataLength = data.length,
-            i = 0;
 
-        for (i; i < dataLength; i += 1) {
-            ohlc.push([
-                data[i][0], // the date
-                data[i][1], // open
-                data[i][2], // high
-                data[i][3], // low
-                data[i][4] // close
-            ]);
-
-            volume.push([
-                data[i][0], // the date
-                data[i][5] // the volume
-            ]);
-        }
-
-        Highcharts.stockChart('container', {
-            yAxis: [{
-                labels: {
-                    align: 'left'
-                },
-                height: '80%',
-                resize: {
-                    enabled: true
-                }
-            }, {
-                labels: {
-                    align: 'left'
-                },
-                top: '80%',
-                height: '20%',
-                offset: 0
-            }],
-            tooltip: {
-                shape: 'square',
-                headerShape: 'callout',
-                borderWidth: 0,
-                shadow: false,
-                positioner: function (width, height, point) {
-                    var chart = this.chart,
-                        position;
-
-                    if (point.isHeader) {
-                        position = {
-                            x: Math.max(
-                                // Left side limit
-                                chart.plotLeft,
-                                Math.min(
-                                    point.plotX + chart.plotLeft - width / 2,
-                                    // Right side limit
-                                    chart.chartWidth - width - chart.marginRight
-                                )
-                            ),
-                            y: point.plotY
-                        };
-                    } else {
-                        position = {
-                            x: point.series.chart.plotLeft,
-                            y: point.series.yAxis.top - chart.plotTop
-                        };
-                    }
-
-                    return position;
-                }
-            },
-            series: [{
-                type: 'ohlc',
-                id: 'BTCUSDT',
-                name: 'BTCUSDT Price',
-                data: ohlc
-            }, {
-                type: 'column',
-                id: 'BTC-volume',
-                name: 'BTC Volume',
-                data: volume,
-                yAxis: 1
-            }],
-            responsive: {
-                rules: [{
-                    condition: {
-                        maxWidth: 800
-                    },
-                    chartOptions: {
-                        rangeSelector: {
-                            inputEnabled: false
-                        }
-                    }
-                }]
-            }
-        });
-    });
-
-</script>
+<!-- Table Product -->
+<div class="row">
+    <div class="col-12">
+      <div class="card card-default">
+        <div class="card-header">
+          <h2 class="text-primary" >各幣種現價</h2>
+        </div>
+        <div class="card-body">
+          <table id="productsTable" class="table table-hover table-product" style="width:100%">
+            <thead>
+              <tr>
+                <th></th>
+                <th>幣種</th>
+                <th>現在幣價</th>
+                <th>24hr 最高價</th>
+                <th>24hr 最低價</th>
+                <th>24hr 賣出幣成交量</th>
+                <th>24hr USDT成交額</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in output.values %}
+              <tr>
+                <td></td>
+                <td>{{ i[0] }}</td>
+                <td>{{ i[1] }}</td>
+                <td>{{ i[2] }}</td>
+                <td>{{ i[3] }}</td>
+                <td>{{ i[4] }}</td>
+                <td>{{ i[5] }}</td>
+              </tr>
+              {% endfor%}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+</div>
 
 {% endblock page_content %}
