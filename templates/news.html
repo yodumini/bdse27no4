@@ -1,6 +1,10 @@
 {% extends "parts/base.html" %}
 
-{% block title %} 請修改title {% endblock title %}
+{% block title %} 幣圈新聞 {% endblock title %}
+{% block head %}
+    {{ super() }}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
+{% endblock head %}
 
 {% block navbar_list %}
 {% include "parts/_navbar_tab2.html" %}
@@ -8,28 +12,58 @@
 
 
 {% block page_content %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{{ super() }}
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 
-<form class="form-inline" style="" method="POST" action="/newslist">
-    <div class="row input-group-newsletter" >
+<form class="form-inline" method="POST" action="/news">
+    <div class="row input-group-newsletter">
         <div class="col">
-            <input class="form-control" id="testInput" name="url" style="width: 100%" type="search" placeholder="請輸入關鍵字">
+            <select class="form-control" name="send">
+
+                <option selected value ="default" >Please select...
+                <option name="send" value="6" id="6">6月</option>
+                <option name="send" value="7" id="7">7月</option>
+                <option name="send" value="8" id="8">8月</option>
+                <option name="send" value="9" id="9">9月</option>
+                <option name="send" value="10" id="10">10月</option>
+                
+                </option>
+
+            </select>
+            <!-- <input class="form-control" id="testInput" name="url" style="width: 100%" type="search" placeholder="請選擇月份"> -->
         </div>
         <div class="col-auto">
-            <button class="btn btn-primary" type="submit">Submit</button>
+            <button class="btn btn-primary" type="submit">Search</button>
         </div>
     </div>
 </form>
 <div>
-    <table id="dataTable" class="table table-striped">
-        {% for i in res %}
-        <tr>
-            <td><a href={{ i['link'] }}>{{ i['title'] }}</a></td>
-            <td>{{ i['published'] }}</td>
-        </tr>
-        {% endfor %}
+
+    <table id="data" class="table table-light table-striped table-hover mt-5 table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Tag</th>
+                <th scope="col">Tittle</th>
+                <th scope="col">Content</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for col in outputs.values %}
+            <tr>
+                <td>{{ col[0].strftime('%m-%d') }}</td>
+                <td>{{ col[1] }}</td>
+                <td><a href="{{ col[4] }}">{{ col[2] }}</a></td>
+                <td>{{ col[3][:103] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
 </div>
+<script>
+    $(document).ready(function () {
+        $('#data').DataTable();
+    });
+</script>
 
 {% endblock page_content %}
-

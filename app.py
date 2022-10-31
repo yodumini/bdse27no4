@@ -3,14 +3,28 @@ from predict import utils
 from predict.model import perform_training
 import pandas as pd
 import requests
-from urllib.parse import quote
-import feedparser
+# from urllib.parse import quote
+# import feedparser
 import os
 import json
 import multiprocessing as mp
-
+from sqlalchemy import create_engine
 
 app = Flask(__name__)
+
+#連接資料庫
+username = 'sherwin'     # 資料庫帳號
+password = '123456'     # 資料庫密碼
+host = '172.22.35.211'    # 資料庫位址
+port = '3306'         # 資料庫埠號
+database = 'news'   # 資料庫名稱
+table = 'news1'   # 表格名稱
+
+# 建立資料庫引擎
+engine = create_engine(f'mysql+pymysql://{username}:{password}@{host}:{port}/{database}')
+# 建立資料庫連線
+connection  = engine.connect()
+
 
 # @app.route('/')
 # def found():
@@ -87,19 +101,32 @@ def found():
 #             })
 #     return render_template('index.html', title=title, crypto_name=stock_list, df_list=df_list)
 
-@app.route('/news')
+@app.route('/news', methods=['GET', 'POST'])
 def analytics():
     title = "幣圈新聞"
-    return render_template('news.html', title=title)
+    num = ['06','07','08','09','10']
+    opt=len(num)
+    if request.method == "GET":
+        sql=' SELECT date, label, title, content, url FROM news1 '
+        df = pd.read_sql_query(sql, engine, coerce_float=True)
+        connection.close()
+    else:
+        num = request.form[ 'send' ]
+        sql = f"SELECT date, label, title, content, url FROM news1 WHERE MONTH(date) = '{num}'"
+        df = pd.read_sql_query(sql, engine, coerce_float=True)
+        connection.close()
+        num = ['06','07','08','09','10']
+    return render_template( 'news.html',title=title,outputs=df,num=num,opt=opt )
 
-@app.route('/newslist', methods=['POST'])
-def newslist():
-    title = "幣圈新聞"
-    url = "https://tw.stock.yahoo.com/rss?q="
-    text = request.form['url']
-    url = url+quote(text)
-    r = feedparser.parse(url)['entries']
-    return render_template('news.html', res=r, title=title)
+
+# @app.route('/newslist', methods=['POST'])
+# def newslist():
+#     title = "幣圈新聞"
+#     url = "https://tw.stock.yahoo.com/rss?q="
+#     text = request.form['url']
+#     url = url+quote(text)
+#     r = feedparser.parse(url)['entries']
+#     return render_template('news.html', res=r, title=title)
 
 
 # @app.route('/predict')
