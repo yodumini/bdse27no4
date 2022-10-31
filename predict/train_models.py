@@ -37,7 +37,7 @@ import numpy
 def train_predict_plot(file_name, df, ml_model):
     # time series DL model parameters
     look_back = 10
-    epochs = 20
+    epochs = 10
     batch_size = 10
     d = 0.2
 
