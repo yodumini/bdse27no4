@@ -217,7 +217,7 @@ def stockplot():
     r = df.values.tolist()
     return {"res": r}
 
-@app.route('/coinprice',methods=["GET"])
+@app.route('/coin',methods=["GET"])
 def coinprice():
     df_list = []
     for i in ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'DOGEUSDT']:
