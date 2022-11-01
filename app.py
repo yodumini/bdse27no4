@@ -13,11 +13,15 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 
 #連接資料庫
-username = 'sherwin'     # 資料庫帳號
-password = '123456'     # 資料庫密碼
-host = '172.22.35.211'    # 資料庫位址
+# username = 'sherwin'     # 資料庫帳號
+# password = '123456'     # 資料庫密碼
+# host = '172.22.35.211'    # 資料庫位址
+username = 'bbdbe8ea88eccc'     # 資料庫帳號
+password = '40cda128'     # 資料庫密碼
+host = 'us-cdbr-east-06.cleardb.net'    # 資料庫位址
 port = '3306'         # 資料庫埠號
-database = 'news'   # 資料庫名稱
+# database = 'news'   # 資料庫名稱
+database = 'heroku_052dd73d4bca4f8'   # 資料庫名稱
 table = 'news1'   # 表格名稱
 
 # 建立資料庫引擎
