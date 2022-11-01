@@ -47,7 +47,7 @@ def job(x):
     return df
 
 @app.route('/')
-@app.route('/index')
+@app.route('/coinprice')
 def found():
     title = "即時幣價"
     stock_list = [file[:-4] for file in os.listdir("predict/data")]
