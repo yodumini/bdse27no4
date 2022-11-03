@@ -55,8 +55,10 @@ def job(x):
 def found():
     title = "即時幣價"
     stock_list = [file[:-4] for file in os.listdir("predict/data")]
+    # stock_list = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'USDCUSDT', 'XRPUSDT', 'BUSDUSDT', 'DOGEUSDT', 'ADAUSDT', 'SOLUSDT', 'MATICUSDT', 'DOTUSDT', 'SHIBUSDT', 'DAIUSDT', 'TRXUSDT', 'AVAXUSDT', 'UNIUSDT', 'WBTCUSDT', 'LTCUSDT', 'LEOUSDT', 'ATOMUSDT', 'LINKUSDT', 'FTTUSDT', 'ETCUSDT', 'CROUSDT', 'XLMUSDT', 'XMRUSDT', 'ALGOUSDT', 'NEARUSDT', 'BCHUSDT', 'BTCBUSDT', 'QNTUSDT', 'FILUSDT', 'FLOWUSDT', 'VETUSDT', 'LUNCUSDT', 'CHZUSDT', 'EGLDUSDT', 'ICPUSDT', 'HTUSDT', 'HBARUSDT', 'APEUSDT', 'XTZUSDT', 'SANDUSDT', 'THETAUSDT', 'MANAUSDT', 'AAVEUSDT', 'EOSUSDT', 'KCSUSDT', 'OKBUSDT', 'APTUSDT', 'USDPUSDT', 'BSVUSDT', 'AXSUSDT', 'MKRUSDT', 'BTTOLDUSDT', 'TUSDUSDT', 'ZECUSDT', 'KLAYUSDT', 'BTTUSDT', 'SNXUSDT', 'USDDUSDT', 'XECUSDT', 'MIOTAUSDT', 'ETHWUSDT', 'CAKEUSDT', 'USDNUSDT', 'GRTUSDT', 'NEOUSDT', 'FTMUSDT', 'ARUSDT', 'MINAUSDT', 'NEXOUSDT', 'PAXGUSDT', 'HNTUSDT', 'GTUSDT', 'RUNEUSDT', 'TWTUSDT', 'BATUSDT', 'CRVUSDT', 'GUSDUSDT', 'LDOUSDT', 'DASHUSDT', 'WEMIXUSDT', 'ENJUSDT', 'KAVAUSDT', 'FEIUSDT', 'STXUSDT', 'CSPRUSDT', 'ZILUSDT', 'BNXUSDT', 'DCRUSDT', '1INCHUSDT', 'XDCUSDT', 'WAVESUSDT', 'CVXUSDT', 'RVNUSDT', 'HOTUSDT', 'USTCUSDT', 'COMPUSDT']
     stock_list.sort()
 
+    # version1
     # df_list = []
     # for i in stock_list:
     #     query_url = f'https://www.binance.com/bapi/asset/v2/public/asset-service/product/get-product-by-symbol?symbol={i}'
@@ -66,22 +68,26 @@ def found():
     #         df = pd.DataFrame(data['data'], columns=columns, index=[0])
     #         df_list.append(df)
 
-    pool = mp.Pool(processes=3)
-    df_list = pool.map(job, stock_list)
-    df_list = pd.concat(df_list)
-    df_list = df_list.dropna()
-    df_list = df_list.sort_values('s')
+    # version2
+    # pool = mp.Pool(processes=3)
+    # df_list = pool.map(job, stock_list)
+    # df_list = pd.concat(df_list)
+    # df_list = df_list.dropna()
+    # df_list = df_list.sort_values('s')
 
-    df_list2 = []
-    for i in ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'DOGEUSDT']:
-        query_url = f'https://www.binance.com/bapi/asset/v2/public/asset-service/product/get-product-by-symbol?symbol={i}'
-        response = requests.get(query_url)
-        data = json.loads(response.text)['data']
-        if data:
-            df_list2.append({
-                'name': data['an'],
-                'price': data['o'],
-            })
+    # version3
+    query_url = f'https://www.binance.com/api/v3/ticker?symbols=[%22ETCUSDT%22,%22DOGEUSDT%22,%22UNIUSDT%22,%22FILUSDT%22,%22APEUSDT%22,%22FLOWUSDT%22,%221INCHUSDT%22,%22FTMUSDT%22,%22LUNCUSDT%22,%22MANAUSDT%22,%22ATOMUSDT%22,%22MKRUSDT%22,%22RVNUSDT%22,%22THETAUSDT%22,%22ETHUSDT%22,%22SNXUSDT%22,%22XTZUSDT%22,%22ARUSDT%22,%22DASHUSDT%22,%22SHIBUSDT%22,%22APTUSDT%22,%22SANDUSDT%22,%22BNXUSDT%22,%22PAXGUSDT%22,%22BATUSDT%22,%22NEXOUSDT%22,%22BCHUSDT%22,%22EOSUSDT%22,%22FTTUSDT%22,%22LINKUSDT%22,%22BUSDUSDT%22,%22AAVEUSDT%22,%22QNTUSDT%22,%22SOLUSDT%22,%22BNBUSDT%22,%22LDOUSDT%22,%22LTCUSDT%22,%22ZECUSDT%22,%22XRPUSDT%22,%22DOTUSDT%22,%22CVXUSDT%22,%22ENJUSDT%22,%22MINAUSDT%22,%22EGLDUSDT%22,%22XMRUSDT%22,%22AXSUSDT%22,%22CHZUSDT%22,%22ADAUSDT%22,%22BTCUSDT%22,%22ZILUSDT%22,%22KLAYUSDT%22,%22XECUSDT%22,%22DCRUSDT%22,%22GRTUSDT%22,%22ICPUSDT%22,%22HOTUSDT%22,%22CRVUSDT%22,%22NEOUSDT%22,%22ALGOUSDT%22,%22HBARUSDT%22,%22KAVAUSDT%22,%22COMPUSDT%22,%22MATICUSDT%22,%22NEARUSDT%22,%22WAVESUSDT%22,%22TRXUSDT%22,%22XLMUSDT%22,%22CAKEUSDT%22,%22STXUSDT%22,%22AVAXUSDT%22,%22VETUSDT%22,%22TWTUSDT%22,%22RUNEUSDT%22]'
+    response = requests.get(query_url)
+    data = json.loads(response.text)
+    data = pd.DataFrame(data)
+    df_list = data[['symbol', 'lastPrice', 'highPrice', 'lowPrice', 'volume', 'quoteVolume']]
+    # df_list.loc[:,['lastPrice', 'highPrice', 'lowPrice', 'volume', 'quoteVolume']] = df_list.loc[:,['lastPrice', 'highPrice', 'lowPrice', 'volume', 'quoteVolume']].astype('float')
+
+
+    query_url = f'https://www.binance.com/api/v3/ticker?symbols=[%22BTCUSDT%22,%22ETHUSDT%22,%22BNBUSDT%22,%22DOGEUSDT%22]'
+    response = requests.get(query_url)
+    df_list2 = json.loads(response.text)
+
 
     return render_template('index.html', title=title, crypto_name=stock_list, output=df_list, df_list=df_list2)
 
@@ -232,7 +238,7 @@ def coinprice():
     return {"res": df_list}
 
 if __name__=="__main__":
-    # app.run(debug=True, port=5000)
-
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(debug=True, port=5001)
+    #
+    # port = int(os.environ.get('PORT', 5000))
+    # app.run(host='0.0.0.0', port=port, debug=True)

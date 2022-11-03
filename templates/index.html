@@ -159,9 +159,9 @@
 <div class="col-xl-3 col-sm-6">
   <div class="card card-default card-mini">
     <div class="card-header">
-      <h2>$ {{ df_list[0]['price'] }}</h2>
+      <h2>$ {{ df_list[0]['lastPrice'][:-6] }}</h2>
       <div class="sub-title">
-        <span class="mr-1">{{ df_list[0]['name'] }}</span>
+        <span class="mr-1">{{ df_list[0]['symbol'] }}</span>
       </div>
     </div>
   </div>
@@ -169,9 +169,9 @@
 <div class="col-xl-3 col-sm-6">
   <div class="card card-default card-mini">
     <div class="card-header">
-      <h2>$ {{ df_list[1]['price'] }}</h2>
+      <h2>$ {{ df_list[1]['lastPrice'][:-6] }}</h2>
       <div class="sub-title">
-        <span class="mr-1">{{ df_list[1]['name'] }}</span>
+        <span class="mr-1">{{ df_list[1]['symbol'] }}</span>
       </div>
     </div>
   </div>
@@ -179,9 +179,9 @@
 <div class="col-xl-3 col-sm-6">
   <div class="card card-default card-mini">
     <div class="card-header">
-      <h2>$ {{ df_list[2]['price'] }}</h2>
+      <h2>$ {{ df_list[2]['lastPrice'][:-6] }}</h2>
       <div class="sub-title">
-        <span class="mr-1">{{ df_list[2]['name'] }}</span>
+        <span class="mr-1">{{ df_list[2]['symbol'] }}</span>
       </div>
     </div>
   </div>
@@ -189,9 +189,9 @@
 <div class="col-xl-3 col-sm-6">
   <div class="card card-default card-mini">
     <div class="card-header">
-      <h2>$ {{ df_list[3]['price'] }}</h2>
+      <h2>$ {{ df_list[3]['lastPrice'][:-3] }}</h2>
       <div class="sub-title">
-        <span class="mr-1">{{ df_list[3]['name'] }}</span>
+        <span class="mr-1">{{ df_list[3]['symbol'] }}</span>
       </div>
     </div>
   </div>
