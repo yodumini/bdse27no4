@@ -13,6 +13,7 @@
 
 {% block page_content %}
 {{ super() }}
+{% import "news_stat.html"  as news_stat %}
 <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 
 <form class="form-inline" method="POST" action="/news">
@@ -37,6 +38,8 @@
         </div>
     </div>
 </form>
+
+{{ news_stat }}
 <div>
 
     <table id="data" class="table table-light table-striped table-hover mt-5 table table-striped">
