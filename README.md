@@ -5,7 +5,8 @@
 ├── app.py # 主要執行程式
 ├── code # 專題研究過程程式碼
 │   ├── deepLearningPractice
-│   └── newscrawl
+│   ├── newscrawl
+│   └── risk-kmeans
 ├── data # 即時幣價kline圖數據源
 │   ├── 1INCHUSDT.csv # 交易對的歷史幣價數據
 │   └── 聚類结果.csv # 交易對風險分類結果
