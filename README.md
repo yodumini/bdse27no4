@@ -21,6 +21,9 @@
 ├── data # 即時幣價kline圖數據源
 │   ├── 1INCHUSDT.csv # 交易對的歷史幣價數據
 │   └── 聚類结果.csv # 交易對風險分類結果
+├── doc
+│   ├── 第四組 - 期末專題報告_最終版.pptx.pdf
+│   └── gcp部署網站流程.txt
 ├── predict # 預測幣價頁面所使用的數據源與模型程式碼
 │   ├── bdse27_GRU_model_cci30.h5
 │   ├── bdse27_lstm_model_cci30.h5
