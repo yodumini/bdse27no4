@@ -1,0 +1,32 @@
+- gcp創一個vm 開啟http https
+- 設定內外部靜態ip 外部 35.202.189.215:5000。34.135.255.106
+- 防火牆開啟port5000方便從外網連接調適flask
+- 設定cloud dns https://hackmd.io/@JeffWen/gcpDNS
+接下來跟著這網站步驟
+- https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-22-04#step-1-installing-the-components-from-the-ubuntu-repositories
+-- 安裝nginx 到步驟2:https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-22-04
+-- 需要安裝sudo apt-get install ufw (不確定ufw是否為必要的，在gcp有自己設定port的方式)
+-- 在Freenom上申請網址 註冊教學https://zhuanlan.zhihu.com/p/109553641
+-- 按照網站的指令做到最後一步設定到https://，一樣取名叫myproject
+接著是我設定專題的方式，用git拉資料
+- 下載git `sudo apt-get install git-all` 並且在家目錄把專題pull下來
+- stop nginx myproject (不確定是否有先後順序問題)
+- copy從git clone下的內容到myproject裡，再把app.py改成myproject.py
+- 進myproject開啟python虛擬環境 source myprojectenv/bin/activate
+- 在虛擬環境下載所有套件
+- 關閉虛擬環境 deactivate
+- start nginx myproject 
+
+# ginucore配置文件指令
+sudo systemctl stop myproject
+sudo systemctl start myproject
+sudo systemctl enable myproject
+sudo systemctl status myproject
+
+# nginx配置文件指令
+sudo systemctl stop nginx
+sudo systemctl start nginx
+sudo systemctl status nginx
+
+sudo systemctl restart nginx
+
