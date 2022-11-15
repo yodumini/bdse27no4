@@ -1,7 +1,17 @@
 ## 資展國際巨量資料分析班 BDSE27-4
-### [unicoin虛擬貨幣分析平台](unicoin.ga)
+### [unicoin虛擬貨幣分析平台](https://unicoin.ga)
+### 動機
+近年來虛擬貨幣市場掀起投資熱潮，自比特幣推出以來話題與爭議不斷，還有劇烈的價格波動，更是讓許多投資者既期待又怕受傷害。
+為了更瞭解這項新崛起的金融商品，我們想利用專題的機會，研究虛擬貨幣的投資趨勢及風險
 
-本專題視覺化平台用python flask框架
+### 研究流程
+- 環境建置：linux gcp建立Hadoop spark叢集計算效能、mysql
+- 網路資料爬蟲：python資料收集、鉅亨網新聞爬蟲
+- 風險分類模型：sklearn,kmeans
+- 幣價預測模型：tensorflowm,lstm,gru
+- 視覺化平台：flask,hmtl,css,js,bootstrap,highcharts
+
+### 本專題視覺化平台用python flask框架
 ```
 ├── app.py # 主要執行程式
 ├── code # 專題研究過程程式碼
@@ -41,15 +51,3 @@
     ├── risk.html
     └── team.html
 ```
-### 動機
-近年來虛擬貨幣市場掀起投資熱潮，自比特幣推出以來話題與爭議不斷，還有劇烈的價格波動，更是讓許多投資者既期待又怕受傷害。
-為了更瞭解這項新崛起的金融商品，我們想利用專題的機會，研究虛擬貨幣的投資趨勢及風險
-
-### 研究流程
-- 環境建置：linux gcp建立Hadoop spark叢集計算效能、mysql
-- 網路資料爬蟲：python資料收集、鉅亨網新聞爬蟲
-- 風險分類模型：sklearn,kmeans
-- 幣價預測模型：tensorflowm,lstm,gru
-- 視覺化平台：flask,hmtl,css,js,bootstrap,highcharts
-
-### 
