@@ -15,7 +15,7 @@ def perform_training(stock_name, df, models_list):
                   "LSTM_cci30_model":'#FF9EDD',
                   "GRU_cci30_model":'#FFFD7F'}
 
-    print(df.head())
+    #print(df.head())
     dates, prices, ml_models_outputs, prediction_date, test_price,look_back = tm.train_predict_plot(stock_name, df, models_list)
     # 沒仔細想，但是這樣才能讓資料數量相同且對齊
     dates = dates[look_back:-look_back]

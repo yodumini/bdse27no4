@@ -251,11 +251,11 @@ def LSTM_model(dates, prices, test_date, df,look_back = 1,epochs=50, batch_size=
     model.add(Dense(32))
     model.add(Dense(1))
     model.compile(loss='mean_squared_error', optimizer='adam')
-    print(model.summary())
+    #print(model.summary())
 
     # tarin model
     start_time=datetime.datetime.now()
-    model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, verbose=2)
+    model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, verbose=0)
     end_time=datetime.datetime.now()
     time_delta=(end_time-start_time).seconds
 
@@ -350,11 +350,11 @@ def GRU_model(dates, prices, test_date, df,look_back = 1,epochs=50, batch_size=8
     model.add(Dense(32))
     model.add(Dense(1))
     model.compile(loss='mean_squared_error', optimizer='adam')
-    print(model.summary())
+    #print(model.summary())
 
     # train model
     start_time=datetime.datetime.now()
-    model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, verbose=2)
+    model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, verbose=0)
     end_time=datetime.datetime.now()
     time_delta=(end_time-start_time).seconds
 
@@ -440,7 +440,7 @@ def LSTM_cci30_model(dates, prices, test_date, df,look_back = 10,epochs=50, batc
 
     # train model
     start_time=datetime.datetime.now()
-    model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, verbose=2)
+    model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, verbose=0)
     end_time=datetime.datetime.now()
     time_delta=(end_time-start_time).seconds
 
@@ -526,7 +526,7 @@ def GRU_cci30_model(dates, prices, test_date, df,look_back = 10,epochs=50, batch
 
     # train model
     start_time=datetime.datetime.now()
-    model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, verbose=2)
+    model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, verbose=0)
     end_time=datetime.datetime.now()
     time_delta=(end_time-start_time).seconds
 
